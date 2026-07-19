@@ -4,8 +4,8 @@
 // ==========================
 
 // Durées en secondes
-const FOCUS_TIME = 5; // 25 minutes
-const BREAK_TIME = 3; // 5 minutes
+const FOCUS_TIME = 25*60; // 25 minutes
+const BREAK_TIME = 5*60; // 5 minutes
 
 // Messages affichés à la fin d'un focus
 const congratulationsMessages = [
