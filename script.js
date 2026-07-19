@@ -128,6 +128,23 @@ function getPlantIcon() {
     return currentIcon;
 }
 
+function animatePlantGrowth() {
+    streakDisplay.classList.remove("plant-grow");
+
+    // Force le navigateur à réinitialiser l’animation
+    void streakDisplay.offsetWidth;
+
+    streakDisplay.classList.add("plant-grow");
+}
+
+function animatePlantLevelUp() {
+    streakDisplay.classList.remove("plant-level-up");
+
+    void streakDisplay.offsetWidth;
+
+    streakDisplay.classList.add("plant-level-up");
+}
+
 // --------------------------
 // Affichage du compteur
 // --------------------------
@@ -319,8 +336,15 @@ function finishCycle() {
     playFinishSound();
 
     if (currentMode === "focus") {
+        const previousIcon = getPlantIcon();
         focusStreak++;
+        const newIcon = getPlantIcon();
         updateStreakDisplay();
+        if (previousIcon !== newIcon) {
+        animatePlantLevelUp();
+    } else {
+        animatePlantGrowth();
+    }
         showFocusSuccess();
     } else {
         showBreakSuccess();
