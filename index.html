@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Caelia Focus</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&family=Playfair+Display:wght@500;700&display=swap"
+        rel="stylesheet"
+    >
+</head>
+
+<body>
+
+    <div class="pomodoro">
+
+        <div class="content">
+             <h2 class="title" id="modeTitle">
+            Focus Time 🍅
+        </h2>
+
+        <!-- Vue avec le minuteur -->
+        <div class="timer-view" id="timerView">
+
+            <div class="timer" id="timer">
+                25:00
+            </div>
+
+            <div class="progress">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div class="buttons">
+
+                <button id="start">
+                    ▶ Commencer
+                </button>
+
+                <button id="pause">
+                    ❚❚ Pause
+                </button>
+
+                <button id="reset">
+                    ↺ Reset
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- Vue affichée à la fin d'un cycle -->
+        <div class="message-view hidden" id="messageView">
+
+            <h3 class="message-title" id="messageTitle">
+                Bien joué ! ✨
+            </h3>
+
+            <p class="message-text" id="messageText">
+                Tu viens de terminer un cycle de concentration.
+            </p>
+
+            <button class="next-button" id="nextButton">
+                ▶ Commencer la pause
+            </button>
+
+        </div>
+
+        </div>
+       
+        <div class ="footer">
+             <div class="stats">
+            <p id="streak">
+             🌱 0 Focus
+            </p>
+        </div>
+ 
+    <div class="theme-selector">
+
+    <button
+        class="theme-dot theme-pink"
+        data-theme="pink"
+        aria-label="Thème Sakura"
+        title="Sakura">
+    </button>
+
+    <button
+        class="theme-dot theme-matcha"
+        data-theme="matcha"
+        aria-label="Thème Matcha"
+        title="Matcha">
+    </button>
+
+    <button
+        class="theme-dot theme-lavender"
+        data-theme="lavender"
+        aria-label="Thème Crépuscule"
+        title="Crépuscule">
+    </button>
+
+    <button
+        class="theme-dot theme-night"
+        data-theme="night"
+        aria-label="Thème Océan"
+        title="Océan">
+    </button>
+
+</div>
+
+        <p class="signature">
+            By Caelia Création ✨
+        </p>
+
+    </div>
+
+        </div>
+      
+
+    <script src="script.js"></script>
+
+</body>
+</html>

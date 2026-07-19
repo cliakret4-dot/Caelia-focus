@@ -1,0 +1,571 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+
+}
+
+:root {
+    --background-top: #3A2030;
+    --background-bottom: #301A24;
+    --text: #FFFFFF;
+    --accent-start: #FF016F;
+    --accent-end: #C00063;
+    --hover: #FFF047;
+    --active: #E9DA42;
+    --glow: rgba(255, 1, 111, 0.18);
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+body{
+
+    background:linear-gradient(180deg,var(--accent-start),var(--accent-end));
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    min-height:532px;
+
+    min-width:300px;
+
+    padding:16px;
+
+    font-family:Montserrat,sans-serif;
+
+}
+
+.pomodoro{
+
+    width:min(350px,100%);
+    min-width:280px;
+
+    height:500px;
+    min-height:500px;
+
+    background: linear-gradient(
+        180deg,
+        var(--background-top),
+        var(--background-bottom)
+    );
+
+    border-radius:22px;
+
+    padding:28px 24px;
+
+    color:var(--text);
+
+    display:flex;
+
+    flex-direction:column;
+
+    overflow: hidden;
+
+}
+
+.title{
+
+    text-align:center;
+
+    font-weight:400;
+
+    font-size:20px;
+
+}
+
+.timer{
+
+    margin-top:30px;
+
+    text-align:center;
+
+    font-size:90px;
+
+    font-family:"Amandine",bold;
+
+    text-shadow:
+    0 0 10px var(--glow),
+    0 0 18px var(--glow);
+
+}
+
+.progress {
+    position: relative;
+
+    margin-top: 20px;
+    width: 100%;
+    max-width: 100%;
+    height: 22px;
+
+    border: 2px solid var(--text);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.progress-fill {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+
+    width: 40%;
+
+    background: linear-gradient(
+        90deg,
+        var(--accent-start),
+        var(--accent-end)
+    );
+    overflow: hidden;
+}
+
+.progress-fill::after{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+
+    right:0;
+
+    width:20px;
+
+    height:100%;
+
+    background:
+
+        linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.35),
+        transparent
+        );
+
+}
+
+.buttons{
+
+    margin-top:28px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:15px;
+
+}
+
+button{
+
+    background:none;
+
+    border:none;
+
+    color:var(--text);
+
+    text-align:left;
+
+    font-size:18px;
+
+    cursor:pointer;
+
+    transform:translateX(5px);
+
+    transition:.25s;
+
+}
+
+button:hover{
+
+    color:var(--hover);
+
+}
+
+button:active{
+
+    color:var(--active);
+
+    transform:scale(.97);
+
+}
+
+.stats {
+    margin : 0;
+    text-align: center;
+}
+
+#streak {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+}
+
+.signature{
+
+    margin : 0;
+
+    margin-bottom: -5px;
+
+    text-align:center;
+
+    font-style:italic;
+
+    font-size:11px;
+
+    opacity:.55;
+
+    letter-spacing:.4px;
+
+}
+
+.message-title {
+    font-family: "Playfair Display", serif;
+    font-size: 30px;
+    font-weight: 700;
+
+    margin-bottom: 14px;
+}
+
+.message-text {
+    max-width: 290px;
+
+    font-size: 14px;
+    line-height: 1.6;
+
+    margin-bottom: 42px;
+}
+
+.next-button {
+    text-align: center;
+}
+
+.timer-view {
+    display: flex !important;
+    flex-direction: column;
+}
+
+.message-view {
+    flex: 1;
+
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+}
+
+.hidden {
+    display: none !important;
+}
+
+button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    color: var(--text);
+}
+
+button:disabled:hover {
+    color: var(--text);
+}
+
+button:disabled:active {
+    transform: translateX(5px);
+}
+
+/* Barre plus fluide */
+
+.progress-fill {
+    transition: width 0.4s linear;
+}
+
+
+/* Animation d'apparition */
+
+.timer-view,
+.message-view {
+    animation: fadeIn 0.45s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* Animation du message de réussite */
+
+.message-title {
+    animation: messagePop 0.5s ease;
+}
+
+@keyframes messagePop {
+    0% {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+
+    70% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+
+/* Animation du chrono au démarrage */
+
+.timer.timer-running {
+    animation: timerPulse 0.45s ease;
+}
+
+@keyframes timerPulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.04);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Thèmes */
+
+body[data-theme="pink"] {
+    --background-top: #3A2030;
+    --background-bottom: #301A24;
+
+    --text: #FFFFFF;
+    --accent-start: #ff6aaa;
+    --accent-end: #C00063;
+    --hover: #FFF047;
+    --active: #E9DA42;
+    --glow: rgba(255, 1, 111, 0.18);
+}
+
+body[data-theme="matcha"] {
+    --background-top: #32463A;
+    --background-bottom: #26352D;
+
+    --text: #FFFDF5;
+    --accent-start: #dcff96;
+    --accent-end: #6F9B62;
+    --hover: #F3D77A;
+    --active: #D8BC5D;
+    --glow: rgba(184, 216, 121, 0.18);
+}
+
+body[data-theme="lavender"] {
+    --background-top: #403654;
+    --background-bottom: #322A46;
+
+    --text: #FFFFFF;
+    --accent-start: #D9B8FF;
+    --accent-end: #7c51ba;
+    --hover: #FFE58A;
+    --active: #E5CA69;
+    --glow: rgba(217, 184, 255, 0.2);
+}
+
+body[data-theme="night"] {
+    --background-top: #1B2332;
+    --background-bottom: #121722;
+
+    --text: #F7F8FC;
+    --accent-start: #8dc4ff;
+    --accent-end: #5766E8;
+    --hover: #FFE278;
+    --active: #E8C95C;
+    --glow: rgba(101, 214, 255, 0.2);
+}
+
+
+/* Sélecteur de thème */
+
+.theme-selector {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+
+    margin-bottom: 5px;
+}
+
+.theme-dot {
+    width: 18px;
+    height: 18px;
+
+    padding: 0;
+
+    border: 2px solid rgba(255, 255, 255, 0.45);
+    border-radius: 50%;
+
+    cursor: pointer;
+
+    transform: none;
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.theme-dot:hover {
+      transform: translateY(-2px) scale(1.12);
+    border-color: rgba(255, 255, 255, 0.9);
+}
+
+.theme-dot:active {
+    transform: scale(0.95);
+}
+
+.theme-pink {
+    background: #FF016F;
+}
+
+.theme-matcha {
+    background: #93B86D;
+}
+
+.theme-lavender {
+    background: #B88BE8;
+}
+
+.theme-night {
+    background: #4263D8;
+}
+
+.theme-dot.active {
+    border-color: #FFFFFF;
+    box-shadow:
+        0 0 0 3px rgba(255, 255, 255, 0.14),
+        0 0 12px var(--glow);
+}
+
+.progress-fill::after {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    right: -12px;
+
+    width: 28px;
+    height: 100%;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.4),
+        transparent
+    );
+
+    animation: progressGlow 1.8s ease-in-out infinite;
+}
+
+@keyframes progressGlow {
+    0% {
+        opacity: 0.2;
+        transform: translateX(-8px);
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0.2;
+        transform: translateX(8px);
+    }
+}
+
+.theme-dot:disabled {
+    opacity: 1;
+    cursor: pointer;
+}
+
+.content {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    min-height: 0;
+}
+
+.footer {
+    flex-shrink: 0;
+
+    margin-top: 16px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 10px;
+}
+
+#timerView,
+#messageView {
+    min-height: 250px;
+}
+
+
+@media (max-width: 380px) {
+
+    body {
+        padding: 10px;
+    }
+
+    .pomodoro {
+       width: 100%;
+       min-width:0px;
+       
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .timer {
+        font-size: clamp(64px, 22vw, 84px);
+    }
+
+    .controls {
+        font-size: 16px;
+    }
+}
+
+#messageView {
+    width: 100%;
+    max-width: 100%;
+    text-align: center;
+}
+
+#messageView p,
+#messageView h2 {
+    overflow-wrap: break-word;
+}
