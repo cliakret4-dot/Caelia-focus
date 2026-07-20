@@ -612,7 +612,7 @@ body[data-theme="night"] {
    Version Notion
 =========================== */
 
-.embed .pomodoro{
+.embed {
 
     /* fond neutre */
 
@@ -636,6 +636,9 @@ body[data-theme="night"] {
 
 body.embed{
     background: transparent;
+    padding: 0;
+    min-height: 500px;
+    min-width: 350px;
 }
 
 body.embed .pomodoro{
