@@ -612,35 +612,17 @@ body[data-theme="night"] {
    Version Notion
 =========================== */
 
-.embed {
-
-    /* fond neutre */
-
-    background: rgba(255,255,255,.05);
-
-    /* on garde la carte */
-
-    border:1px solid rgba(255,255,255,.12);
-
-    /* ombre plus discrète */
-
-    box-shadow:
-        0 8px 24px rgba(0,0,0,.12);
-
+html {
+    margin: 0;
 }
 
-.embed,
-.embed body{
+body.embed {
     background: transparent !important;
-}
-
-body.embed{
-    background: transparent;
     padding: 0;
     min-height: 500px;
-    min-width: 350px;
+    min-width: 280px;
 }
 
-body.embed .pomodoro{
-    margin:0;
+body.embed .pomodoro {
+    margin: 0;
 }
