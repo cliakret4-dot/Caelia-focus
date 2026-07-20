@@ -71,6 +71,8 @@ body{
 
     overflow: hidden;
 
+    position:relative;
+
 }
 
 .title{
@@ -212,11 +214,12 @@ button:active{
     text-align: center;
 }
 
-#streak {
+#dailyFocus {
     margin: 0;
     font-size: 15px;
     font-weight: 500;
     letter-spacing: 0.2px;
+    margin-bottom: 10px;
 }
 
 .signature{
@@ -578,11 +581,11 @@ body[data-theme="night"] {
     overflow-wrap: break-word;
 }
 
-#streak {
+#dailyFocus {
     transform-origin: center;
 }
 
-#streak.plant-grow {
+#dailyFocus.plant-grow {
     animation: plantGrow 650ms ease;
 }
 
@@ -608,7 +611,7 @@ body[data-theme="night"] {
     }
 }
 
-#streak.plant-level-up {
+#dailyFocus.plant-level-up {
     animation: plantLevelUp 900ms ease;
 }
 
@@ -714,5 +717,43 @@ body.embed .pomodoro {
 .modal-buttons button{
 
     flex:1;
+
+}
+
+#dailyFocus {
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    opacity: 0.7;
+    text-align: center;
+}
+
+.open-browser{
+
+    position:absolute;
+
+    top:18px;
+    right:18px;
+
+    border:none;
+
+    background:none;
+
+    color:var(--text);
+
+    cursor:pointer;
+
+    font-size:13px;
+
+    opacity:.6;
+
+    transition:.2s;
+}
+
+.open-browser:hover{
+
+    opacity:1;
+
+    transform:scale(1.05);
 
 }
