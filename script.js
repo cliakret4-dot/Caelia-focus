@@ -93,10 +93,6 @@ const cancelResetBtn = document.getElementById("cancelReset");
 const dailyFocusDisplay = document.getElementById("dailyFocus");
 const openBrowserBtn = document.getElementById("openBrowser");
 
-const dailyFocusDisplay =
-    document.getElementById("dailyFocus") ||
-    document.getElementById("streak");
-
 // Si les deux anciens compteurs existent encore dans le HTML,
 // on retire automatiquement l'ancien pour n'en garder qu'un.
 const legacyStreakDisplay = document.getElementById("streak");
