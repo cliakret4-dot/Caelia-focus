@@ -607,3 +607,24 @@ body[data-theme="night"] {
         transform: scale(1) rotate(0);
     }
 }
+
+/* ===========================
+   Version Notion
+=========================== */
+
+.embed .pomodoro{
+
+    /* fond neutre */
+
+    background: rgba(255,255,255,.05);
+
+    /* on garde la carte */
+
+    border:1px solid rgba(255,255,255,.12);
+
+    /* ombre plus discrète */
+
+    box-shadow:
+        0 8px 24px rgba(0,0,0,.12);
+
+}
