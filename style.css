@@ -628,3 +628,16 @@ body[data-theme="night"] {
         0 8px 24px rgba(0,0,0,.12);
 
 }
+
+.embed,
+.embed body{
+    background: transparent !important;
+}
+
+body.embed{
+    background: transparent;
+}
+
+body.embed .pomodoro{
+    margin:0;
+}
