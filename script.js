@@ -25,6 +25,18 @@ const plantStages = [
     { min: 25, icon: "🍅✨" }
 ];
 
+// --------------------------
+// Mode embed (Notion)
+// --------------------------
+
+const isEmbed =
+    new URLSearchParams(window.location.search)
+        .get("embed") === "true";
+
+if (isEmbed) {
+    document.body.classList.add("embed");
+}
+
 // Mode actuel : "focus" ou "break"
 let currentMode = "focus";
 
