@@ -4,9 +4,9 @@
 // ==========================
 
 // Durées en secondes
-const FOCUS_TIME = 25*60; // 25 minutes
-const BREAK_TIME = 5*60; // 5 minutes
-const LONG_BREAK_TIME = 15*60; // 15 minutes
+const FOCUS_TIME = 5; // 25 minutes
+const BREAK_TIME = 2; // 5 minutes
+const LONG_BREAK_TIME = 3; // 15 minutes
 
 // Messages affichés à la fin d'un focus
 const congratulationsMessages = [
@@ -30,25 +30,18 @@ const plantStages = [
 // Mode embed Notion
 // --------------------------
 
+// --------------------------
+// Mode embed Notion
+// --------------------------
+
 const currentUrl = new URL(window.location.href);
 
-const embedRequested =
+const isEmbed =
     currentUrl.searchParams.get("embed") === "true";
 
-const isInsideIframe =
-    window.self !== window.top;
-
-if (embedRequested && isInsideIframe) {
-    // Le widget est réellement intégré dans Notion
+if (isEmbed) {
+    document.documentElement.classList.add("embed");
     document.body.classList.add("embed");
-}
-
-if (embedRequested && !isInsideIframe) {
-    // La page a été ouverte dans un onglet classique
-    // On retire automatiquement ?embed=true
-    currentUrl.searchParams.delete("embed");
-
-    window.location.replace(currentUrl.toString());
 }
 
 // Mode actuel : "focus" ou "break"
