@@ -27,26 +27,28 @@ const plantStages = [
 ];
 
 // --------------------------
-// Mode embed (Notion)
+// Mode embed Notion
 // --------------------------
 
-const isEmbed =
-    new URLSearchParams(window.location.search)
-        .get("embed") === "true";
+const currentUrl = new URL(window.location.href);
 
-if (isEmbed) {
+const embedRequested =
+    currentUrl.searchParams.get("embed") === "true";
 
+const isInsideIframe =
+    window.self !== window.top;
+
+if (embedRequested && isInsideIframe) {
+    // Le widget est réellement intégré dans Notion
     document.body.classList.add("embed");
-{
+}
 
-        const url = new URL(window.location.href);
+if (embedRequested && !isInsideIframe) {
+    // La page a été ouverte dans un onglet classique
+    // On retire automatiquement ?embed=true
+    currentUrl.searchParams.delete("embed");
 
-        url.searchParams.delete("embed");
-
-        window.open(url.toString(), "_blank");
-
-    });
-
+    window.location.replace(currentUrl.toString());
 }
 
 // Mode actuel : "focus" ou "break"
@@ -88,7 +90,6 @@ const confirmResetBtn = document.getElementById("confirmReset");
 const cancelResetBtn = document.getElementById("cancelReset");
 
 const dailyFocusDisplay = document.getElementById("dailyFocus");
-const openBrowserBtn = document.getElementById("openBrowser");
 
 // Si les deux anciens compteurs existent encore dans le HTML,
 // on retire automatiquement l'ancien pour n'en garder qu'un.
@@ -673,22 +674,6 @@ resetModal.addEventListener("click", (e) => {
     }
 
 });
-
-if (openBrowserBtn) {
-    if (isEmbed) {
-        openBrowserBtn.classList.remove("hidden");
-
-        openBrowserBtn.addEventListener("click", () => {
-            const url = new URL(window.location.href);
-
-            url.searchParams.delete("embed");
-
-            window.open(url.toString(), "_blank");
-        });
-    } else {
-        openBrowserBtn.classList.add("hidden");
-    }
-}
 
 // --------------------------
 // Affichage initial
