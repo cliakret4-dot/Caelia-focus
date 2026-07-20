@@ -107,7 +107,7 @@ body{
     max-width: 100%;
     height: 22px;
 
-    border:2px solid rgba(255,255,255,.45);
+     border:2px solid rgba(255,255,255,.45);
     overflow: hidden;
     flex-shrink: 0;
 }
@@ -608,6 +608,32 @@ body[data-theme="night"] {
     }
 }
 
+#streak.plant-level-up {
+    animation: plantLevelUp 900ms ease;
+}
+
+@keyframes plantLevelUp {
+    0% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+
+    35% {
+        transform: scale(1.35);
+        filter: brightness(1.5);
+    }
+
+    65% {
+        transform: scale(1.15);
+        filter: brightness(1.25);
+    }
+
+    100% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+}
+
 /* ===========================
    Version Notion
 =========================== */
@@ -625,4 +651,68 @@ body.embed {
 
 body.embed .pomodoro {
     margin: 0;
+}
+
+.modal{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.45);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:1000;
+
+    backdrop-filter:blur(3px);
+
+}
+
+.hidden{
+
+    display:none;
+
+}
+
+.modal-content{
+
+    width:260px;
+
+    border-radius:18px;
+
+    padding:22px;
+
+    text-align:center;
+
+    background:linear-gradient(
+        180deg,
+        var(--background-top),
+        var(--background-bottom)
+    );
+
+    color:var(--text);
+
+    box-shadow:0 12px 30px rgba(0,0,0,.25);
+
+}
+
+.modal-buttons{
+
+    display:flex;
+
+    gap:10px;
+
+    margin-top:20px;
+
+}
+
+.modal-buttons button{
+
+    flex:1;
+
 }
