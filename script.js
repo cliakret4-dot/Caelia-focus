@@ -1,6 +1,6 @@
 // ==========================
 // Caelia Focus 🍅
-// V 1.0
+// V 1.1
 // ==========================
 
 // Durées en secondes
@@ -71,6 +71,10 @@ const nextButton = document.getElementById("nextButton");
 
 const streakDisplay = document.getElementById("streak");
 const themeButtons = document.querySelectorAll(".theme-dot");
+
+const resetModal = document.getElementById("resetModal");
+const confirmResetBtn = document.getElementById("confirmReset");
+const cancelResetBtn = document.getElementById("cancelReset");
 
 function showView(viewToShow, viewToHide) {
     viewToHide.classList.add("hidden");
@@ -278,14 +282,7 @@ function pauseTimer() {
 // Réinitialiser le cycle
 // --------------------------
 
-function resetTimer() {
-    const confirmReset = confirm(
-        "Réinitialiser le cycle et revenir à un Focus de 25 minutes ?"
-    );
-
-    if (!confirmReset) {
-        return;
-    }
+function performReset() {
 
     clearInterval(timerInterval);
     timerInterval = null;
@@ -512,8 +509,26 @@ themeButtons.forEach((button) => {
 
 startBtn.addEventListener("click", startTimer);
 pauseBtn.addEventListener("click", pauseTimer);
-resetBtn.addEventListener("click", resetTimer);
+resetBtn.addEventListener("click", () => {
+    resetModal.classList.remove("hidden");
+});
+cancelResetBtn.addEventListener("click", () => {
+    resetModal.classList.add("hidden");
+});
+confirmResetBtn.addEventListener("click", () => {
 
+    resetModal.classList.add("hidden");
+
+    performReset();
+
+});
+resetModal.addEventListener("click", (e) => {
+
+    if (e.target === resetModal) {
+        resetModal.classList.add("hidden");
+    }
+
+});
 
 // --------------------------
 // Affichage initial
