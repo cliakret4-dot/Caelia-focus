@@ -37,10 +37,7 @@ const isEmbed =
 if (isEmbed) {
 
     document.body.classList.add("embed");
-
-    openBrowserBtn.classList.remove("hidden");
-
-    openBrowserBtn.addEventListener("click", () => {
+{
 
         const url = new URL(window.location.href);
 
@@ -676,6 +673,22 @@ resetModal.addEventListener("click", (e) => {
     }
 
 });
+
+if (openBrowserBtn) {
+    if (isEmbed) {
+        openBrowserBtn.classList.remove("hidden");
+
+        openBrowserBtn.addEventListener("click", () => {
+            const url = new URL(window.location.href);
+
+            url.searchParams.delete("embed");
+
+            window.open(url.toString(), "_blank");
+        });
+    } else {
+        openBrowserBtn.classList.add("hidden");
+    }
+}
 
 // --------------------------
 // Affichage initial
