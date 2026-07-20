@@ -4,8 +4,9 @@
 // ==========================
 
 // Durées en secondes
-const FOCUS_TIME = 25*60; // 25 minutes
-const BREAK_TIME = 5*60; // 5 minutes
+const FOCUS_TIME = 5; // 25 minutes
+const BREAK_TIME = 2; // 5 minutes
+const LONG_BREAK_TIME = 3; // 15 minutes
 
 // Messages affichés à la fin d'un focus
 const congratulationsMessages = [
@@ -34,7 +35,21 @@ const isEmbed =
         .get("embed") === "true";
 
 if (isEmbed) {
+
     document.body.classList.add("embed");
+
+    openBrowserBtn.classList.remove("hidden");
+
+    openBrowserBtn.addEventListener("click", () => {
+
+        const url = new URL(window.location.href);
+
+        url.searchParams.delete("embed");
+
+        window.open(url.toString(), "_blank");
+
+    });
+
 }
 
 // Mode actuel : "focus" ou "break"
@@ -49,8 +64,8 @@ let running = false;
 let timerInterval = null;
 let hasStarted = false;
 
-// Nombre de focus terminés
-let focusStreak = 0;
+let dailyFocusCount = 0;
+let focusCycleCount = 0;
 
 // Éléments HTML
 const modeTitle = document.getElementById("modeTitle");
@@ -69,12 +84,30 @@ const messageTitle = document.getElementById("messageTitle");
 const messageText = document.getElementById("messageText");
 const nextButton = document.getElementById("nextButton");
 
-const streakDisplay = document.getElementById("streak");
 const themeButtons = document.querySelectorAll(".theme-dot");
 
 const resetModal = document.getElementById("resetModal");
 const confirmResetBtn = document.getElementById("confirmReset");
 const cancelResetBtn = document.getElementById("cancelReset");
+
+const dailyFocusDisplay = document.getElementById("dailyFocus");
+const openBrowserBtn = document.getElementById("openBrowser");
+
+const dailyFocusDisplay =
+    document.getElementById("dailyFocus") ||
+    document.getElementById("streak");
+
+// Si les deux anciens compteurs existent encore dans le HTML,
+// on retire automatiquement l'ancien pour n'en garder qu'un.
+const legacyStreakDisplay = document.getElementById("streak");
+
+if (
+    legacyStreakDisplay &&
+    dailyFocusDisplay &&
+    legacyStreakDisplay !== dailyFocusDisplay
+) {
+    legacyStreakDisplay.remove();
+}
 
 function showView(viewToShow, viewToHide) {
     viewToHide.classList.add("hidden");
@@ -93,11 +126,10 @@ function showView(viewToShow, viewToHide) {
 
 function saveState() {
     const state = {
-        currentMode: currentMode,
-        totalTime: totalTime,
-        timeLeft: timeLeft,
-        hasStarted: hasStarted,
-        focusStreak: focusStreak
+        currentMode,
+        totalTime,
+        timeLeft,
+        hasStarted
     };
 
     localStorage.setItem("caeliaFocusState", JSON.stringify(state));
@@ -113,20 +145,30 @@ function loadState() {
 
     if (!savedState) return;
 
-    const state = JSON.parse(savedState);
+    try {
+        const state = JSON.parse(savedState);
 
-    currentMode = state.currentMode || "focus";
-    totalTime = state.totalTime || FOCUS_TIME;
-    timeLeft = state.timeLeft ?? FOCUS_TIME;
-    hasStarted = state.hasStarted || false;
-    focusStreak = state.focusStreak || 0;
+        currentMode = state.currentMode || "focus";
+        totalTime = Number(state.totalTime) || FOCUS_TIME;
+        timeLeft = Number.isFinite(Number(state.timeLeft))
+            ? Number(state.timeLeft)
+            : totalTime;
+        hasStarted = Boolean(state.hasStarted);
+    } catch (error) {
+        console.warn("Sauvegarde du minuteur illisible, réinitialisation.", error);
+        localStorage.removeItem("caeliaFocusState");
+        return;
+    }
 
-    // Le chrono revient toujours en pause après un rechargement
+    // Le chrono revient toujours en pause après un rechargement.
     running = false;
     timerInterval = null;
 
     if (currentMode === "break") {
-        modeTitle.textContent = "Pause ☕";
+        modeTitle.textContent =
+            totalTime === LONG_BREAK_TIME
+                ? "Longue pause 🌿"
+                : "Pause ☕";
     } else {
         modeTitle.textContent = "Focus Time 🍅";
     }
@@ -136,7 +178,7 @@ function getPlantIcon() {
     let currentIcon = plantStages[0].icon;
 
     plantStages.forEach((stage) => {
-        if (focusStreak >= stage.min) {
+        if (dailyFocusCount >= stage.min) {
             currentIcon = stage.icon;
         }
     });
@@ -145,33 +187,32 @@ function getPlantIcon() {
 }
 
 function animatePlantGrowth() {
-    streakDisplay.classList.remove("plant-grow");
+    dailyFocusDisplay.classList.remove("plant-grow");
 
     // Force le navigateur à réinitialiser l’animation
-    void streakDisplay.offsetWidth;
+    void dailyFocusDisplay.offsetWidth;
 
-    streakDisplay.classList.add("plant-grow");
+    dailyFocusDisplay.classList.add("plant-grow");
 }
 
 function animatePlantLevelUp() {
-    streakDisplay.classList.remove("plant-level-up");
+    dailyFocusDisplay.classList.remove("plant-level-up");
 
-    void streakDisplay.offsetWidth;
+    void dailyFocusDisplay.offsetWidth;
 
-    streakDisplay.classList.add("plant-level-up");
+    dailyFocusDisplay.classList.add("plant-level-up");
 }
 
 // --------------------------
-// Affichage du compteur
+// Affichage du compteur journalier
 // --------------------------
 
-function updateStreakDisplay() {
+function updateDailyFocusDisplay() {
+    if (!dailyFocusDisplay) return;
+
     const plantIcon = getPlantIcon();
-
-    streakDisplay.textContent =
-        `${plantIcon} ${focusStreak} Focus`;
-
-    saveState();
+    dailyFocusDisplay.textContent =
+        `${plantIcon} Aujourd’hui : ${dailyFocusCount} Focus`;
 }
 
 
@@ -357,21 +398,46 @@ function finishCycle() {
 
     updateDisplay();
     updateStartButton();
-    updateProgress();
-
     playFinishSound();
 
     if (currentMode === "focus") {
+        // Vérifie que le compteur appartient toujours à aujourd'hui.
+        resetDailyFocusIfNeeded();
+
         const previousIcon = getPlantIcon();
-        focusStreak++;
+
+        dailyFocusCount++;
+        focusCycleCount++;
+
+        saveDailyFocus();
+
+        const isLongBreak = focusCycleCount >= 4;
+
+        if (isLongBreak) {
+            totalTime = LONG_BREAK_TIME;
+            timeLeft = LONG_BREAK_TIME;
+
+            // La prochaine série repart de zéro après la longue pause.
+            focusCycleCount = 0;
+        } else {
+            totalTime = BREAK_TIME;
+            timeLeft = BREAK_TIME;
+        }
+
+        currentMode = "break";
+        saveFocusCycle();
+
         const newIcon = getPlantIcon();
-        updateStreakDisplay();
+        updateDailyFocusDisplay();
+
         if (previousIcon !== newIcon) {
-        animatePlantLevelUp();
-    } else {
-        animatePlantGrowth();
-    }
-        showFocusSuccess();
+            animatePlantLevelUp();
+        } else {
+            animatePlantGrowth();
+        }
+
+        saveState();
+        showFocusSuccess(isLongBreak);
     } else {
         showBreakSuccess();
     }
@@ -390,18 +456,22 @@ function getRandomCongratulations() {
 // Écran "Bien joué"
 // --------------------------
 
-function showFocusSuccess() {
-    console.log("Affichage de l’écran Bien joué");
-
+function showFocusSuccess(isLongBreak = false) {
     showView(messageView, timerView);
 
     modeTitle.textContent = "Focus terminé 🍅";
     messageTitle.textContent = getRandomCongratulations();
 
-    messageText.textContent =
-        "Tu viens de terminer un cycle de concentration. Prends maintenant une pause bien méritée 🌿";
+    if (isLongBreak) {
+        messageText.textContent =
+            "Quatre Focus terminés ! Une longue pause de 15 minutes t’attend pour recharger les batteries 🌿";
+        nextButton.textContent = "▶ Commencer la longue pause";
+    } else {
+        messageText.textContent =
+            "Tu viens de terminer un cycle de concentration. Prends maintenant une pause bien méritée 🌿";
+        nextButton.textContent = "▶ Commencer la pause";
+    }
 
-    nextButton.textContent = "▶ Commencer la pause";
     nextButton.onclick = startBreak;
 }
 
@@ -413,8 +483,15 @@ function showFocusSuccess() {
 function startBreak() {
     currentMode = "break";
 
-    totalTime = BREAK_TIME;
-    timeLeft = BREAK_TIME;
+    // La durée a déjà été choisie dans finishCycle().
+    // On ne la remplace surtout pas par BREAK_TIME ici.
+    if (totalTime !== BREAK_TIME && totalTime !== LONG_BREAK_TIME) {
+        totalTime = BREAK_TIME;
+    }
+
+    if (timeLeft <= 0 || timeLeft > totalTime) {
+        timeLeft = totalTime;
+    }
 
     running = false;
     hasStarted = false;
@@ -422,12 +499,16 @@ function startBreak() {
     clearInterval(timerInterval);
     timerInterval = null;
 
-    modeTitle.textContent = "Pause ☕";
+    modeTitle.textContent =
+        totalTime === LONG_BREAK_TIME
+            ? "Longue pause 🌿"
+            : "Pause ☕";
 
     showView(timerView, messageView);
 
     updateDisplay();
     updateStartButton();
+    saveState();
 
     startTimer();
 }
@@ -497,6 +578,76 @@ function loadTheme() {
     applyTheme(savedTheme);
 }
 
+function getTodayKey() {
+    const today = new Date();
+
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
+function resetDailyFocusIfNeeded() {
+    const savedDate = localStorage.getItem("caeliaDailyFocusDate");
+    const today = getTodayKey();
+
+    if (savedDate !== today) {
+        dailyFocusCount = 0;
+
+        localStorage.setItem("caeliaDailyFocusDate", today);
+        localStorage.setItem("caeliaDailyFocusCount", "0");
+
+        updateDailyFocusDisplay();
+    }
+}
+
+function loadDailyFocus() {
+    const savedDate = localStorage.getItem("caeliaDailyFocusDate");
+    const today = getTodayKey();
+
+    if (savedDate === today) {
+        dailyFocusCount =
+            Number(localStorage.getItem("caeliaDailyFocusCount")) || 0;
+    } else {
+        dailyFocusCount = 0;
+
+        localStorage.setItem("caeliaDailyFocusDate", today);
+        localStorage.setItem("caeliaDailyFocusCount", "0");
+    }
+
+    updateDailyFocusDisplay();
+}
+
+function saveDailyFocus() {
+    localStorage.setItem("caeliaDailyFocusDate", getTodayKey());
+    localStorage.setItem(
+        "caeliaDailyFocusCount",
+        dailyFocusCount.toString()
+    );
+}
+
+function loadFocusCycle() {
+    focusCycleCount =
+        Number(localStorage.getItem("caeliaFocusCycleCount")) || 0;
+
+    // Sécurité en cas d'ancienne valeur incohérente.
+    if (focusCycleCount < 0 || focusCycleCount > 3) {
+        focusCycleCount = 0;
+        saveFocusCycle();
+    }
+}
+
+function saveFocusCycle() {
+    localStorage.setItem(
+        "caeliaFocusCycleCount",
+        focusCycleCount.toString()
+    );
+}
+
+
+
+
 themeButtons.forEach((button) => {
     button.addEventListener("click", () => {
         applyTheme(button.dataset.theme);
@@ -535,8 +686,11 @@ resetModal.addEventListener("click", (e) => {
 // --------------------------
 
 loadTheme();
+loadDailyFocus();
+loadFocusCycle();
 loadState();
 
 updateDisplay();
-updateStreakDisplay();
+updateProgress();
+updateDailyFocusDisplay();
 updateStartButton();
