@@ -267,16 +267,33 @@ function pauseTimer() {
 // --------------------------
 
 function resetTimer() {
-    clearInterval(timerInterval);
+    const confirmReset = confirm(
+        "Réinitialiser le cycle et revenir à un Focus de 25 minutes ?"
+    );
 
+    if (!confirmReset) {
+        return;
+    }
+
+    clearInterval(timerInterval);
     timerInterval = null;
+
+    currentMode = "focus";
+
+    totalTime = FOCUS_TIME;
+    timeLeft = FOCUS_TIME;
+
     running = false;
     hasStarted = false;
 
-    timeLeft = totalTime;
+    modeTitle.textContent = "Focus Time 🍅";
+
+    showView(timerView, messageView);
 
     updateDisplay();
     updateStartButton();
+
+    saveState();
 }
 
 function playFinishSound() {
