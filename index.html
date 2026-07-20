@@ -18,7 +18,9 @@
         rel="stylesheet"
     >
     <link rel="icon" type="image/png" href="favicon.png">
-    
+
+    <script src="script.js" defer></script>
+
 </head>
 
 <body>
@@ -126,7 +128,31 @@
         </div>
       
 
-    <script src="script.js"></script>
+<div id="resetModal" class="modal hidden">
+
+    <div class="modal-content">
+
+        <h3>🍅 Commencer un nouveau cycle ?</h3>
+
+        <p>
+            Revenir à un nouveau cycle de 25 minutes ?
+        </p>
+
+        <div class="modal-buttons">
+
+            <button id="cancelReset" class="secondary">
+                Annuler
+            </button>
+
+            <button id="confirmReset">
+                Réinitialiser
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 
 </body>
 </html>
